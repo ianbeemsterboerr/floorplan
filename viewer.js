@@ -221,8 +221,8 @@
     return piece(start, len);
   }
 
-  function hitRuler(wx, wy) {
-    const tol = 9 / scale();
+  function hitRuler(wx, wy, coarse) {
+    const tol = (coarse ? 24 : 9) / scale();
     const p = toScreen(wx, wy);
     for (let i = plan.objects.length - 1; i >= 0; i--) {
       const o = plan.objects[i];
@@ -240,8 +240,9 @@
     return null;
   }
 
-  function computeHover(wx, wy, sx, sy) {
-    const tol = 7 / scale();
+  function computeHover(wx, wy, sx, sy, coarse) {
+    const grab = coarse ? 22 : 7;
+    const tol = grab / scale();
     for (let i = plan.objects.length - 1; i >= 0; i--) {
       const o = plan.objects[i];
       if (o.hidden) continue;
@@ -268,7 +269,7 @@
       const piece = wallPieceAt(o, wx, wy);
       if (piece) return { kind: 'wall', id: o.id, text: fmtLen(piece.len), seg: piece, sx, sy };
     }
-    const r = hitRuler(wx, wy);
+    const r = hitRuler(wx, wy, coarse);
     if (r) {
       const L = rulerLine(r);
       return { kind: 'ruler', id: r.id, wallId: r.wallId, text: fmtLen(L ? L.len : 0), sx, sy };
@@ -541,46 +542,122 @@
   }
 
   // ---------- Input: look, don't touch ----------
+  // Pointer events so a finger works the same as a mouse: drag to pan, pinch
+  // to zoom, tap to measure. Nothing here can alter the plan.
 
-  canvas.addEventListener('mousemove', (e) => {
+  const clampZoom = (z) => Math.max(0.05, Math.min(8, z));
+  const ptFor = (e) => {
     const r = canvas.getBoundingClientRect();
-    const sx = e.clientX - r.left, sy = e.clientY - r.top;
-    if (panning) {
-      view.x = panning.vx + (sx - panning.sx);
-      view.y = panning.vy + (sy - panning.sy);
-      draw();
-      return;
-    }
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  };
+
+  const pointers = new Map();
+  let gesture = null;
+  const TAP_SLOP = 6;      // px of travel still counted as a tap, not a drag
+
+  function setHover(sx, sy, coarse) {
     const w = toWorld(sx, sy);
-    const next = computeHover(w.x, w.y, sx, sy);
+    const next = computeHover(w.x, w.y, sx, sy, coarse);
     const changed = (next && hover)
       ? (next.id !== hover.id || next.kind !== hover.kind || next.text !== hover.text
          || next.sx !== hover.sx || next.sy !== hover.sy)
       : (next !== hover);
     if (changed) { hover = next; draw(); }
-    canvas.style.cursor = next ? 'pointer' : 'grab';
-  });
+    return next;
+  }
 
-  canvas.addEventListener('mousedown', (e) => {
-    const r = canvas.getBoundingClientRect();
-    panning = { sx: e.clientX - r.left, sy: e.clientY - r.top, vx: view.x, vy: view.y };
-    canvas.style.cursor = 'grabbing';
-  });
-  window.addEventListener('mouseup', () => { panning = null; canvas.style.cursor = 'grab'; });
-  canvas.addEventListener('mouseleave', () => { if (hover) { hover = null; draw(); } });
-
-  canvas.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    const r = canvas.getBoundingClientRect();
-    const sx = e.clientX - r.left, sy = e.clientY - r.top;
+  function zoomAbout(sx, sy, factor) {
     const before = toWorld(sx, sy);
-    const factor = Math.exp(-e.deltaY * 0.0016);
-    view.zoom = Math.max(0.05, Math.min(8, view.zoom * factor));
+    view.zoom = clampZoom(view.zoom * factor);
     const after = toWorld(sx, sy);
     view.x += (after.x - before.x) * scale();
     view.y += (after.y - before.y) * scale();
     draw();
+  }
+
+  canvas.addEventListener('pointerdown', (e) => {
+    canvas.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, ptFor(e));
+    const pts = [...pointers.values()];
+    if (pointers.size === 1) {
+      gesture = { mode: 'pan', from: pts[0], vx: view.x, vy: view.y, moved: 0,
+                  touch: e.pointerType !== 'mouse' };
+      canvas.style.cursor = 'grabbing';
+    } else if (pointers.size === 2) {
+      const [a, b] = pts;
+      gesture = { mode: 'pinch', dist: Math.hypot(b.x - a.x, b.y - a.y), zoom: view.zoom };
+    }
+  });
+
+  canvas.addEventListener('pointermove', (e) => {
+    const p = ptFor(e);
+    if (pointers.has(e.pointerId)) pointers.set(e.pointerId, p);
+
+    if (gesture && gesture.mode === 'pinch' && pointers.size >= 2) {
+      const [a, b] = [...pointers.values()];
+      const dist = Math.hypot(b.x - a.x, b.y - a.y);
+      if (gesture.dist > 1) {
+        const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+        const target = clampZoom(gesture.zoom * (dist / gesture.dist));
+        zoomAbout(mid.x, mid.y, target / view.zoom);
+      }
+      return;
+    }
+
+    if (gesture && gesture.mode === 'pan') {
+      const dx = p.x - gesture.from.x, dy = p.y - gesture.from.y;
+      gesture.moved = Math.max(gesture.moved, Math.hypot(dx, dy));
+      if (gesture.moved > TAP_SLOP) {
+        view.x = gesture.vx + dx;
+        view.y = gesture.vy + dy;
+        draw();
+      }
+      return;
+    }
+
+    if (e.pointerType === 'mouse') {
+      const hit = setHover(p.x, p.y, false);
+      canvas.style.cursor = hit ? 'pointer' : 'grab';
+    }
+  });
+
+  function endPointer(e) {
+    const p = pointers.get(e.pointerId) || ptFor(e);
+    pointers.delete(e.pointerId);
+    // A tap rather than a drag: measure whatever is under the finger and
+    // leave the readout up until the next tap.
+    if (gesture && gesture.mode === 'pan' && gesture.moved <= TAP_SLOP) {
+      setHover(p.x, p.y, !!gesture.touch);
+    }
+    if (pointers.size === 0) {
+      gesture = null;
+      canvas.style.cursor = 'grab';
+    } else if (pointers.size === 1) {
+      const [only] = [...pointers.values()];
+      gesture = { mode: 'pan', from: only, vx: view.x, vy: view.y, moved: 0, touch: true };
+    }
+  }
+  canvas.addEventListener('pointerup', endPointer);
+  canvas.addEventListener('pointercancel', endPointer);
+
+  canvas.addEventListener('pointerleave', (e) => {
+    if (e.pointerType === 'mouse' && hover) { hover = null; draw(); }
+  });
+
+  canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const p = ptFor(e);
+    zoomAbout(p.x, p.y, Math.exp(-e.deltaY * 0.0016));
   }, { passive: false });
+
+  document.getElementById('zoom-in').addEventListener('click', () => {
+    const r = canvas.getBoundingClientRect();
+    zoomAbout(r.width / 2, r.height / 2, 1.25);
+  });
+  document.getElementById('zoom-out').addEventListener('click', () => {
+    const r = canvas.getBoundingClientRect();
+    zoomAbout(r.width / 2, r.height / 2, 1 / 1.25);
+  });
 
   document.getElementById('fit').addEventListener('click', fit);
   window.addEventListener('resize', resize);

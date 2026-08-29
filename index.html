@@ -21,8 +21,10 @@
   header h1 { font-size: 15px; font-weight: 600; margin: 0; }
   header .meta { color: var(--muted); font-size: 13px; }
   header .spacer { flex: 1; }
+  header .btns { display: flex; gap: 6px; }
   header button {
-    font: inherit; font-size: 13px; padding: 4px 10px; cursor: pointer;
+    font: inherit; font-size: 13px; padding: 6px 12px; cursor: pointer;
+    min-width: 40px; -webkit-tap-highlight-color: transparent;
     background: #fff; color: var(--ink);
     border: 1px solid var(--line); border-radius: 6px;
   }
@@ -44,14 +46,16 @@
     <h1>Appartement — plattegrond</h1>
     <span class="meta" id="meta"></span>
     <span class="spacer"></span>
-    <button id="fit" type="button">Fit</button>
+    <span class="btns"><button id="zoom-out" type="button" aria-label="Zoom out">&minus;</button>
+    <button id="zoom-in" type="button" aria-label="Zoom in">+</button>
+    <button id="fit" type="button">Fit</button></span>
   </header>
   <div id="wrap"><canvas id="canvas"></canvas></div>
   <footer>
-    <span class="hint">Hover any wall, door, window or ruler to measure it · drag to pan · scroll to zoom</span>
+    <span class="hint">Tap or hover any wall, door, window or ruler to measure it · drag to pan · pinch or scroll to zoom</span>
     <span class="spacer"></span>
     <span>Read-only view · <b id="total"></b></span>
   </footer>
-  <script src="viewer.js?v=1"></script>
+  <script src="viewer.js?v=2"></script>
 </body>
 </html>

@@ -10,7 +10,9 @@ with [Khaaka](https://github.com/ianbeemsterboerr/Khaaka).
 - **Hover anything to measure it.** Walls report the clear span between the
   openings and other walls either side of them, not the whole run. Doors,
   windows and rulers report their own length.
-- **Drag** to pan, **scroll** to zoom, **Fit** to frame the whole plan.
+- **Drag** to pan, **scroll** or **pinch** to zoom, **+ / −** and **Fit** in
+  the header. Works the same with a finger as with a mouse.
+- On touch, **tap** an object instead of hovering it.
 
 That is the entire feature set. There are no tools, no selection and no
 editing paths in this page, so the drawing cannot be changed from here.
