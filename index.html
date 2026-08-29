@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Appartement — plattegrond</title>
+<meta name="robots" content="noindex, nofollow" />
+<style>
+  :root { --ink: #1c2433; --muted: #5b6577; --line: #dfe4ee; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--ink); background: #eef1f6;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  header {
+    display: flex; align-items: baseline; gap: 14px;
+    padding: 10px 16px; background: #fff; border-bottom: 1px solid var(--line);
+  }
+  header h1 { font-size: 15px; font-weight: 600; margin: 0; }
+  header .meta { color: var(--muted); font-size: 13px; }
+  header .spacer { flex: 1; }
+  header button {
+    font: inherit; font-size: 13px; padding: 4px 10px; cursor: pointer;
+    background: #fff; color: var(--ink);
+    border: 1px solid var(--line); border-radius: 6px;
+  }
+  header button:hover { background: #f4f6fa; }
+  #wrap { position: relative; flex: 1; min-height: 0; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  footer {
+    padding: 7px 16px; background: #fff; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 12.5px;
+    display: flex; gap: 16px; align-items: center;
+  }
+  footer .spacer { flex: 1; }
+  footer b { color: var(--ink); font-weight: 600; }
+  @media (max-width: 640px) { header .meta, footer .hint { display: none; } }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Appartement — plattegrond</h1>
+    <span class="meta" id="meta"></span>
+    <span class="spacer"></span>
+    <button id="fit" type="button">Fit</button>
+  </header>
+  <div id="wrap"><canvas id="canvas"></canvas></div>
+  <footer>
+    <span class="hint">Hover any wall, door, window or ruler to measure it · drag to pan · scroll to zoom</span>
+    <span class="spacer"></span>
+    <span>Read-only view · <b id="total"></b></span>
+  </footer>
+  <script src="viewer.js?v=1"></script>
+</body>
+</html>
