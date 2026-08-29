@@ -12,9 +12,9 @@
   "showDims": false,
   "defaultWallThickness": 0.18,
   "view": {
-    "x": 71,
-    "y": 151,
-    "zoom": 0.3
+    "x": 70,
+    "y": 147,
+    "zoom": 0.29
   },
   "objects": [
     {
@@ -704,14 +704,16 @@
     },
     {
       "id": 44,
-      "type": "measure",
-      "label": "F lower width",
+      "type": "ruler",
+      "label": "F lower",
       "fill": "#e8f0ff",
-      "stroke": "#1f3a8a",
+      "stroke": "#8a93a6",
       "strokeWidth": 2,
+      "wallId": 28,
+      "offset": 4.756000000000001,
       "x1": 2.152,
       "y1": 7.925,
-      "x2": 2.88,
+      "x2": 2.629,
       "y2": 7.925
     },
     {

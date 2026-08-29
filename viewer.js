@@ -480,6 +480,9 @@
     if (hover.seg) {
       const a = toScreen(hover.seg.x1, hover.seg.y1);
       const b = toScreen(hover.seg.x2, hover.seg.y2);
+      // Dashed for a measure line: it annotates a span, and drawing it as a
+      // solid bar makes empty space look like fabric that is not there.
+      if (hover.kind === 'measure') ctx.setLineDash([6, 4]);
       ctx.strokeStyle = HOVER_RED;
       ctx.lineWidth = Math.max(3, (hover.seg.thickness || 0) * scale());
       ctx.lineCap = 'butt';
@@ -664,7 +667,7 @@
 
   // ---------- Boot ----------
 
-  fetch('plan.json?v=1')
+  fetch('plan.json?v=3')
     .then(res => res.json())
     .then(data => {
       plan = data;
