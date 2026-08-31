@@ -991,7 +991,29 @@
       "x": 2.13,
       "y": 10.04,
       "rot": 0
+    },
+    {
+      "id": 68,
+      "type": "note",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#7c3aed",
+      "strokeWidth": 2,
+      "x": 2.2,
+      "y": 7.6,
+      "text": "F Badkamer: laagste plafond van de woning, 2350. Twee nissen rechts."
+    },
+    {
+      "id": 69,
+      "type": "note",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#7c3aed",
+      "strokeWidth": 2,
+      "x": 2.4,
+      "y": 10.15,
+      "text": "Meterkast valt buiten de woning; gas en elektra komen hier binnen."
     }
   ],
-  "nextId": 68
+  "nextId": 70
 }

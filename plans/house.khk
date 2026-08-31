@@ -1,0 +1,141 @@
+# ─────────────────────────────────────────────────────────────────────────
+# Appartement, ground floor — from Photos/IMG_3398..3406 plus the EN Vastgoed
+# floor plan. All values in mm, INTERNAL (clear-wall) dimensions.
+# Origin top-left, X right, Y down, matching the master sheet IMG_3398.
+#
+# ROOMS (letter from the master sheet -> name from the floor plan)
+#   D Slaapkamer   C Woonkamer   E Hal   F Badkamer
+#   G Berging      B Keuken      A Hal   + Balkon, Meterkast
+#
+# STRUCTURE: one vertical spine splits the plan. E's bottom wall runs
+# straight through to the right outer wall, so C spans D+E and B/A span F+G.
+#
+# WALLS — only the spine is a measured 180; the rest are derived.
+#   spine 180 | D|E 49 | C|B 100 | F|G 69 | B|A 75 | outer 180 (placeholder)
+#
+# ORDER MATTERS: later objects paint over earlier ones, so every opening is
+# added at the very end. Put them before the walls and the walls bury them.
+# ─────────────────────────────────────────────────────────────────────────
+set --name "Appartement" --units mm --wall-thickness 180
+
+# ── Rooms ────────────────────────────────────────────────────────────────
+# D Slaapkamer — 233 x 60 nook cut from the top-left corner.
+add-polygon --points "413,180 2880,180 2880,5331 180,5331 180,240 413,240" --label "D"
+add-room --at 180,5380 --size 2700x1386 --label "E"
+# F Badkamer — two stacked bites on the right: 251x196 above, 728x564 below.
+add-polygon --points "180,6866 2880,6866 2880,7729 2629,7729 2629,7925 2152,7925 2152,8489 180,8489" --label "F"
+# G Berging — the meterkast eats 957 x 478 out of the bottom-right corner,
+# which is why its right wall reads 1245 against 1723 on the left.
+add-polygon --points "180,8558 2880,8558 2880,9803 1923,9803 1923,10281 180,10281" --label "G"
+# C Woonkamer — 89 x 108 inverse corner top right.
+add-polygon --points "3060,180 6588,180 6588,288 6677,288 6677,6766 3060,6766" --label "C"
+add-room --at 3060,6866 --size 2450x3415 --label "B"
+# A Hal — 157 x 59 inverse corner bottom right.
+add-polygon --points "5585,6866 6677,6866 6677,10222 6520,10222 6520,10281 5585,10281" --label "A"
+
+# E's two closets: stacked against the left wall, 703 deep x 665 wide.
+add-room --at 180,5380 --size 703x665 --label "K" --fill #f3e9d2
+add-room --at 180,6101 --size 703x665 --label "K" --fill #f3e9d2
+# Meterkast — outside the apartment, reached from the common area.
+add-room --at 1923,9803 --size 957x478 --label "MK" --fill #eef1f6
+# Balkon — listed with the rooms so ruler clearances account for it.
+add-room --at 180,-1500 --size 6497x1500 --label "Balkon" --fill #eef1f6
+
+# ── Walls ────────────────────────────────────────────────────────────────
+add-wall --from 90,90     --to 90,10371     --thickness 180   # 11 outer left
+add-wall --from 90,90     --to 6767,90      --thickness 180   # 12 outer top
+add-wall --from 6767,90   --to 6767,10371   --thickness 180   # 13 outer right
+add-wall --from 90,10371  --to 6767,10371   --thickness 180   # 14 outer bottom
+add-wall --from 2970,90   --to 2970,10371   --thickness 180   # 15 the spine
+add-wall --from 90,6816   --to 6767,6816    --thickness 100   # 16 C|B (= E|F)
+add-wall --from 90,5356   --to 2970,5356    --thickness 49    # 17 D|E
+add-wall --from 90,8524   --to 2970,8524    --thickness 69    # 18 F|G
+add-wall --from 5548,6816 --to 5548,10371   --thickness 75    # 19 B|A
+add-wall --from 90,-1590  --to 6767,-1590 --thickness 100   # railing
+add-wall --from 90,-1590  --to 90,90      --thickness 180
+add-wall --from 6767,-1590 --to 6767,90   --thickness 180
+add-wall --from 6588,180  --to 6588,288  --thickness 50   # 33 C nook side 108
+add-wall --from 6588,288  --to 6677,288  --thickness 50   # 34 C nook face  89
+add-wall --from 2629,7729 --to 2880,7729 --thickness 50   # 35 F upper face 251
+add-wall --from 2629,7729 --to 2629,7925 --thickness 50   # 36 F upper side 196
+add-wall --from 2152,7925 --to 2629,7925 --thickness 50   # 37 F lower face
+add-wall --from 2152,7925 --to 2152,8489 --thickness 50   # 38 F lower side 564
+
+# ── Rulers ───────────────────────────────────────────────────────────────
+add-ruler --wall 15 --offset 400 --label "overall"
+add-ruler --wall 12 --offset 400 --label "overall"
+add-ruler --wall 13 --offset 400
+add-ruler --wall 14 --offset 400
+add-ruler --wall 16 --offset 400 --label "spine"
+add-ruler --wall 17 --offset 400
+add-ruler --wall 18 --offset 400
+add-ruler --wall 19 --offset 400
+add-ruler --wall 20 --offset 400
+
+add-ruler --wall 24 --offset 400 --label "C nook"
+add-ruler --wall 25 --offset 400 --label "C nook"
+add-ruler --wall 26 --offset 400 --label "F upper"
+add-ruler --wall 27 --offset 400 --label "F upper"
+add-ruler --wall 29 --offset 400 --label "F lower"
+add-ruler --wall 28 --offset 400 --label "F lower"
+
+set --show-dims false
+
+
+# ── Openings — last, so nothing paints over them ─────────────────────────
+# C, balcony wall: 2117 window + 468 + 795 door + 148 wall + 89 nook = 3617.
+add-window --at 3060,180 --width 2117
+add-door   --at 5645,180 --width 795 --label "balkondeur"
+# D, top wall: window 24 past the nook.
+add-window --at 437,180 --width 2455
+# D <-> C, in the spine: 1058 + 950 opening + 3143 = 5151.
+add-door   --at 2880,1238 --width 950 --rot 90
+# D <-> E Hal: 1862 wall + 758 door + 80 = 2700.
+add-door   --at 2042,5331 --width 758
+# E, east wall: 809 opening, 38 down from E's top wall.
+add-door   --at 2880,5418 --width 809 --rot 90
+# F Badkamer, from E Hal: 891 wall + 759 door + 1050 wall = 2700.
+add-door   --at 1071,6766 --width 759
+# B, left wall: 808 opening, 842 up from B's bottom — opposite G.
+add-door   --at 3060,8631 --width 808 --rot 90
+# B, right wall: 750 opening, 831 up from B's bottom — the door to A.
+add-door   --at 5510,8700 --width 750 --rot 90
+# A, top wall: 251 clear to its left.
+add-door   --at 5836,6866 --width 758
+# G, bottom wall: 170 wall + 791 window + 782 wall = 1743, then the meterkast.
+add-window --at 350,10281 --width 791
+
+# ── Ceiling heights, as one note rather than a value in every room ───────
+# --above puts it clear of everything, rulers included, worked out from
+# the drawing rather than guessed at.
+add-text --above --gap 700 --text "Plafondhoogte 2643-2654  (F: 2350)" --size 15
+
+# ── Services ─────────────────────────────────────────────────────────────
+# Taken from the EN Vastgoed floor plan, which draws the sanitary ware but
+# no electrical work. Positions are scaled off that drawing, NOT measured —
+# good to ~100 mm. Water and drain are shown as a pair 200 mm apart at each
+# fixture. Nothing here is on the hand-measured sheets.
+
+# F Badkamer — wc, wastafel, douche
+add-fixture --kind water --at 2450,7250 --label "wc"
+add-fixture --kind drain --at 2650,7250
+add-fixture --kind water --at 1500,8150 --label "wastafel"
+add-fixture --kind drain --at 1700,8150
+add-fixture --kind water --at 520,8100  --label "douche"
+add-fixture --kind drain --at 720,8100
+
+# B Keuken — aanrecht
+add-fixture --kind water --at 3300,8200 --label "aanrecht"
+add-fixture --kind drain --at 3500,8200
+
+# G Berging — wasmachine
+add-fixture --kind water --at 480,9900  --label "wasmachine"
+add-fixture --kind drain --at 680,9900
+
+# MK meterkast — where the gas comes in. Left of centre so it clears the
+# MK label, which already says what the cupboard is.
+add-fixture --kind gas --at 2130,10040
+
+# ── Notes ────────────────────────────────────────────────────────────────
+add-note --at 2200,7600 --text "F Badkamer: laagste plafond van de woning, 2350. Twee nissen rechts."
+add-note --at 2400,10150 --text "Meterkast valt buiten de woning; gas en elektra komen hier binnen."

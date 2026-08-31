@@ -1,0 +1,1019 @@
+{
+  "version": 1,
+  "projectName": "Appartement",
+  "units": "mm",
+  "pxPerBox": 25,
+  "pxPerMeter": 100,
+  "grid": {
+    "show": true,
+    "snap": true,
+    "size": 0.25
+  },
+  "showDims": false,
+  "defaultWallThickness": 0.18,
+  "view": {
+    "x": 70,
+    "y": 147,
+    "zoom": 0.29
+  },
+  "objects": [
+    {
+      "id": 1,
+      "type": "polygon",
+      "label": "D",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "points": [
+        {
+          "x": 0.413,
+          "y": 0.18
+        },
+        {
+          "x": 2.88,
+          "y": 0.18
+        },
+        {
+          "x": 2.88,
+          "y": 5.331
+        },
+        {
+          "x": 0.18,
+          "y": 5.331
+        },
+        {
+          "x": 0.18,
+          "y": 0.24
+        },
+        {
+          "x": 0.413,
+          "y": 0.24
+        }
+      ],
+      "closed": true
+    },
+    {
+      "id": 2,
+      "type": "room",
+      "label": "E",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 0.18,
+      "y": 5.38,
+      "w": 2.7,
+      "h": 1.386
+    },
+    {
+      "id": 3,
+      "type": "polygon",
+      "label": "F",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "points": [
+        {
+          "x": 0.18,
+          "y": 6.866
+        },
+        {
+          "x": 2.88,
+          "y": 6.866
+        },
+        {
+          "x": 2.88,
+          "y": 7.729
+        },
+        {
+          "x": 2.629,
+          "y": 7.729
+        },
+        {
+          "x": 2.629,
+          "y": 7.925
+        },
+        {
+          "x": 2.152,
+          "y": 7.925
+        },
+        {
+          "x": 2.152,
+          "y": 8.489
+        },
+        {
+          "x": 0.18,
+          "y": 8.489
+        }
+      ],
+      "closed": true
+    },
+    {
+      "id": 4,
+      "type": "polygon",
+      "label": "G",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "points": [
+        {
+          "x": 0.18,
+          "y": 8.558
+        },
+        {
+          "x": 2.88,
+          "y": 8.558
+        },
+        {
+          "x": 2.88,
+          "y": 9.803
+        },
+        {
+          "x": 1.923,
+          "y": 9.803
+        },
+        {
+          "x": 1.923,
+          "y": 10.281
+        },
+        {
+          "x": 0.18,
+          "y": 10.281
+        }
+      ],
+      "closed": true
+    },
+    {
+      "id": 5,
+      "type": "polygon",
+      "label": "C",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "points": [
+        {
+          "x": 3.06,
+          "y": 0.18
+        },
+        {
+          "x": 6.588,
+          "y": 0.18
+        },
+        {
+          "x": 6.588,
+          "y": 0.288
+        },
+        {
+          "x": 6.677,
+          "y": 0.288
+        },
+        {
+          "x": 6.677,
+          "y": 6.766
+        },
+        {
+          "x": 3.06,
+          "y": 6.766
+        }
+      ],
+      "closed": true
+    },
+    {
+      "id": 6,
+      "type": "room",
+      "label": "B",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 3.06,
+      "y": 6.866,
+      "w": 2.45,
+      "h": 3.415
+    },
+    {
+      "id": 7,
+      "type": "polygon",
+      "label": "A",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "points": [
+        {
+          "x": 5.585,
+          "y": 6.866
+        },
+        {
+          "x": 6.677,
+          "y": 6.866
+        },
+        {
+          "x": 6.677,
+          "y": 10.222
+        },
+        {
+          "x": 6.52,
+          "y": 10.222
+        },
+        {
+          "x": 6.52,
+          "y": 10.281
+        },
+        {
+          "x": 5.585,
+          "y": 10.281
+        }
+      ],
+      "closed": true
+    },
+    {
+      "id": 8,
+      "type": "room",
+      "label": "K",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 0.18,
+      "y": 5.38,
+      "w": 0.703,
+      "h": 0.665
+    },
+    {
+      "id": 9,
+      "type": "room",
+      "label": "K",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 0.18,
+      "y": 6.101,
+      "w": 0.703,
+      "h": 0.665
+    },
+    {
+      "id": 10,
+      "type": "room",
+      "label": "MK",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 1.923,
+      "y": 9.803,
+      "w": 0.957,
+      "h": 0.478
+    },
+    {
+      "id": 11,
+      "type": "room",
+      "label": "Balkon",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 0.18,
+      "y": -1.5,
+      "w": 6.497,
+      "h": 1.5
+    },
+    {
+      "id": 12,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 0.09,
+      "y1": 0.09,
+      "x2": 0.09,
+      "y2": 10.371,
+      "thickness": 0.18
+    },
+    {
+      "id": 13,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 0.09,
+      "y1": 0.09,
+      "x2": 6.767,
+      "y2": 0.09,
+      "thickness": 0.18
+    },
+    {
+      "id": 14,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 6.767,
+      "y1": 0.09,
+      "x2": 6.767,
+      "y2": 10.371,
+      "thickness": 0.18
+    },
+    {
+      "id": 15,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 0.09,
+      "y1": 10.371,
+      "x2": 6.767,
+      "y2": 10.371,
+      "thickness": 0.18
+    },
+    {
+      "id": 16,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 2.97,
+      "y1": 0.09,
+      "x2": 2.97,
+      "y2": 10.371,
+      "thickness": 0.18
+    },
+    {
+      "id": 17,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 0.09,
+      "y1": 6.816,
+      "x2": 6.767,
+      "y2": 6.816,
+      "thickness": 0.1
+    },
+    {
+      "id": 18,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 0.09,
+      "y1": 5.356,
+      "x2": 2.97,
+      "y2": 5.356,
+      "thickness": 0.049
+    },
+    {
+      "id": 19,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 0.09,
+      "y1": 8.524,
+      "x2": 2.97,
+      "y2": 8.524,
+      "thickness": 0.069
+    },
+    {
+      "id": 20,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 5.548,
+      "y1": 6.816,
+      "x2": 5.548,
+      "y2": 10.371,
+      "thickness": 0.075
+    },
+    {
+      "id": 21,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 0.09,
+      "y1": -1.59,
+      "x2": 6.767,
+      "y2": -1.59,
+      "thickness": 0.1
+    },
+    {
+      "id": 22,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 0.09,
+      "y1": -1.59,
+      "x2": 0.09,
+      "y2": 0.09,
+      "thickness": 0.18
+    },
+    {
+      "id": 23,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 6.767,
+      "y1": -1.59,
+      "x2": 6.767,
+      "y2": 0.09,
+      "thickness": 0.18
+    },
+    {
+      "id": 24,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 6.588,
+      "y1": 0.18,
+      "x2": 6.588,
+      "y2": 0.288,
+      "thickness": 0.05
+    },
+    {
+      "id": 25,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 6.588,
+      "y1": 0.288,
+      "x2": 6.677,
+      "y2": 0.288,
+      "thickness": 0.05
+    },
+    {
+      "id": 26,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 2.629,
+      "y1": 7.729,
+      "x2": 2.88,
+      "y2": 7.729,
+      "thickness": 0.05
+    },
+    {
+      "id": 27,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 2.629,
+      "y1": 7.729,
+      "x2": 2.629,
+      "y2": 7.925,
+      "thickness": 0.05
+    },
+    {
+      "id": 28,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 2.152,
+      "y1": 7.925,
+      "x2": 2.629,
+      "y2": 7.925,
+      "thickness": 0.05
+    },
+    {
+      "id": 29,
+      "type": "wall",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#4a2e1c",
+      "strokeWidth": 2,
+      "x1": 2.152,
+      "y1": 7.925,
+      "x2": 2.152,
+      "y2": 8.489,
+      "thickness": 0.05
+    },
+    {
+      "id": 30,
+      "type": "ruler",
+      "label": "overall",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 15,
+      "offset": 0.4,
+      "x1": 0.09,
+      "y1": 10.371,
+      "x2": 6.767,
+      "y2": 10.371
+    },
+    {
+      "id": 31,
+      "type": "ruler",
+      "label": "overall",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 12,
+      "offset": 0.4,
+      "x1": 0.09,
+      "y1": 0.09,
+      "x2": 0.09,
+      "y2": 10.371
+    },
+    {
+      "id": 32,
+      "type": "ruler",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 13,
+      "offset": -1.9900000000000002,
+      "x1": 0.09,
+      "y1": 0.09,
+      "x2": 6.767,
+      "y2": 0.09
+    },
+    {
+      "id": 33,
+      "type": "ruler",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 14,
+      "offset": -0.4,
+      "x1": 6.767,
+      "y1": 0.09,
+      "x2": 6.767,
+      "y2": 10.371
+    },
+    {
+      "id": 34,
+      "type": "ruler",
+      "label": "spine",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 16,
+      "offset": -4.907,
+      "x1": 2.97,
+      "y1": 0.09,
+      "x2": 2.97,
+      "y2": 10.371
+    },
+    {
+      "id": 35,
+      "type": "ruler",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 17,
+      "offset": 4.665000000000001,
+      "x1": 0.09,
+      "y1": 6.816,
+      "x2": 6.767,
+      "y2": 6.816
+    },
+    {
+      "id": 36,
+      "type": "ruler",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 18,
+      "offset": -7.656000000000001,
+      "x1": 0.09,
+      "y1": 5.356,
+      "x2": 2.97,
+      "y2": 5.356
+    },
+    {
+      "id": 37,
+      "type": "ruler",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 19,
+      "offset": 3.357000000000001,
+      "x1": 0.09,
+      "y1": 8.524,
+      "x2": 2.97,
+      "y2": 8.524
+    },
+    {
+      "id": 38,
+      "type": "ruler",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 20,
+      "offset": -2.728999999999999,
+      "x1": 5.548,
+      "y1": 6.816,
+      "x2": 5.548,
+      "y2": 10.371
+    },
+    {
+      "id": 39,
+      "type": "ruler",
+      "label": "C nook",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 24,
+      "offset": -2.0889999999999995,
+      "x1": 6.588,
+      "y1": 0.18,
+      "x2": 6.588,
+      "y2": 0.288
+    },
+    {
+      "id": 40,
+      "type": "ruler",
+      "label": "C nook",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 25,
+      "offset": -2.988,
+      "x1": 6.588,
+      "y1": 0.288,
+      "x2": 6.677,
+      "y2": 0.288
+    },
+    {
+      "id": 41,
+      "type": "ruler",
+      "label": "F upper",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 26,
+      "offset": 4.5520000000000005,
+      "x1": 2.629,
+      "y1": 7.729,
+      "x2": 2.88,
+      "y2": 7.729
+    },
+    {
+      "id": 42,
+      "type": "ruler",
+      "label": "F upper",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 27,
+      "offset": -6.448000000000002,
+      "x1": 2.629,
+      "y1": 7.729,
+      "x2": 2.629,
+      "y2": 7.925
+    },
+    {
+      "id": 43,
+      "type": "ruler",
+      "label": "F lower",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 29,
+      "offset": 3.172,
+      "x1": 2.152,
+      "y1": 7.925,
+      "x2": 2.152,
+      "y2": 8.489
+    },
+    {
+      "id": 44,
+      "type": "ruler",
+      "label": "F lower",
+      "fill": "#e8f0ff",
+      "stroke": "#8a93a6",
+      "strokeWidth": 2,
+      "wallId": 28,
+      "offset": 4.756000000000001,
+      "x1": 2.152,
+      "y1": 7.925,
+      "x2": 2.629,
+      "y2": 7.925
+    },
+    {
+      "id": 45,
+      "type": "window",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 3.06,
+      "y": 0.18,
+      "w": 2.117,
+      "rot": 0
+    },
+    {
+      "id": 46,
+      "type": "door",
+      "label": "balkondeur",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 5.645,
+      "y": 0.18,
+      "w": 0.795,
+      "rot": 0
+    },
+    {
+      "id": 47,
+      "type": "window",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 0.437,
+      "y": 0.18,
+      "w": 2.455,
+      "rot": 0
+    },
+    {
+      "id": 48,
+      "type": "door",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 2.88,
+      "y": 1.238,
+      "w": 0.95,
+      "rot": 90
+    },
+    {
+      "id": 49,
+      "type": "door",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 2.042,
+      "y": 5.331,
+      "w": 0.758,
+      "rot": 0
+    },
+    {
+      "id": 50,
+      "type": "door",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 2.88,
+      "y": 5.418,
+      "w": 0.809,
+      "rot": 90
+    },
+    {
+      "id": 51,
+      "type": "door",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 1.071,
+      "y": 6.766,
+      "w": 0.759,
+      "rot": 0
+    },
+    {
+      "id": 52,
+      "type": "door",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 3.06,
+      "y": 8.631,
+      "w": 0.808,
+      "rot": 90
+    },
+    {
+      "id": 53,
+      "type": "door",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 5.51,
+      "y": 8.7,
+      "w": 0.75,
+      "rot": 90
+    },
+    {
+      "id": 54,
+      "type": "door",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 5.836,
+      "y": 6.866,
+      "w": 0.758,
+      "rot": 0
+    },
+    {
+      "id": 55,
+      "type": "window",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": 0.35,
+      "y": 10.281,
+      "w": 0.791,
+      "rot": 0
+    },
+    {
+      "id": 56,
+      "type": "text",
+      "label": "",
+      "fill": "#111827",
+      "stroke": "#1f3a8a",
+      "strokeWidth": 2,
+      "x": -1.02,
+      "y": -3.4000000000000004,
+      "text": "Plafondhoogte 2643-2654  (F: 2350)",
+      "size": 15
+    },
+    {
+      "id": 57,
+      "type": "fixture",
+      "label": "wc",
+      "fill": "#e8f0ff",
+      "stroke": "#0369a1",
+      "strokeWidth": 2,
+      "kind": "water",
+      "x": 2.45,
+      "y": 7.25,
+      "rot": 0
+    },
+    {
+      "id": 58,
+      "type": "fixture",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#475569",
+      "strokeWidth": 2,
+      "kind": "drain",
+      "x": 2.65,
+      "y": 7.25,
+      "rot": 0
+    },
+    {
+      "id": 59,
+      "type": "fixture",
+      "label": "wastafel",
+      "fill": "#e8f0ff",
+      "stroke": "#0369a1",
+      "strokeWidth": 2,
+      "kind": "water",
+      "x": 1.5,
+      "y": 8.15,
+      "rot": 0
+    },
+    {
+      "id": 60,
+      "type": "fixture",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#475569",
+      "strokeWidth": 2,
+      "kind": "drain",
+      "x": 1.7,
+      "y": 8.15,
+      "rot": 0
+    },
+    {
+      "id": 61,
+      "type": "fixture",
+      "label": "douche",
+      "fill": "#e8f0ff",
+      "stroke": "#0369a1",
+      "strokeWidth": 2,
+      "kind": "water",
+      "x": 0.52,
+      "y": 8.1,
+      "rot": 0
+    },
+    {
+      "id": 62,
+      "type": "fixture",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#475569",
+      "strokeWidth": 2,
+      "kind": "drain",
+      "x": 0.72,
+      "y": 8.1,
+      "rot": 0
+    },
+    {
+      "id": 63,
+      "type": "fixture",
+      "label": "aanrecht",
+      "fill": "#e8f0ff",
+      "stroke": "#0369a1",
+      "strokeWidth": 2,
+      "kind": "water",
+      "x": 3.3,
+      "y": 8.2,
+      "rot": 0
+    },
+    {
+      "id": 64,
+      "type": "fixture",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#475569",
+      "strokeWidth": 2,
+      "kind": "drain",
+      "x": 3.5,
+      "y": 8.2,
+      "rot": 0
+    },
+    {
+      "id": 65,
+      "type": "fixture",
+      "label": "wasmachine",
+      "fill": "#e8f0ff",
+      "stroke": "#0369a1",
+      "strokeWidth": 2,
+      "kind": "water",
+      "x": 0.48,
+      "y": 9.9,
+      "rot": 0
+    },
+    {
+      "id": 66,
+      "type": "fixture",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#475569",
+      "strokeWidth": 2,
+      "kind": "drain",
+      "x": 0.68,
+      "y": 9.9,
+      "rot": 0
+    },
+    {
+      "id": 67,
+      "type": "fixture",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#a16207",
+      "strokeWidth": 2,
+      "kind": "gas",
+      "x": 2.13,
+      "y": 10.04,
+      "rot": 0
+    },
+    {
+      "id": 68,
+      "type": "note",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#7c3aed",
+      "strokeWidth": 2,
+      "x": 2.2,
+      "y": 7.6,
+      "text": "F Badkamer: laagste plafond van de woning, 2350. Twee nissen rechts."
+    },
+    {
+      "id": 69,
+      "type": "note",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#7c3aed",
+      "strokeWidth": 2,
+      "x": 2.4,
+      "y": 10.15,
+      "text": "Meterkast valt buiten de woning; gas en elektra komen hier binnen."
+    }
+  ],
+  "nextId": 70
+}
