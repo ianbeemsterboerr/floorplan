@@ -36,6 +36,19 @@ node cli/khaaka.mjs run plans/house.json plans/house.khk
 cp plans/house.json app/plan.json
 ```
 
+## Layers
+
+A panel sits at the top left of the drawing with three switches:
+
+| | Off means |
+|---|---|
+| **Notes** | the numbered pins disappear |
+| **Utilities** | gas, electrical and water/drainage points disappear |
+| **Measurements** | the rulers and dimension labels disappear — **but hovering still measures**, so the drawing goes quiet without losing the ability to interrogate it |
+
+Hidden layers are not hit-tested either: you cannot hover what you cannot
+see. The choice is remembered per browser, not stored in the plan.
+
 ## Measuring
 
 Hover — or tap, on a phone — any wall, door, window, ruler or note. Walls

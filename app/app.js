@@ -6,7 +6,7 @@
 
   // Build tag — check this in the browser console to confirm which script
   // the page actually loaded. Bump it alongside the ?v= in index.html.
-  const BUILD = 6;
+  const BUILD = 7;
 
   // One app, two modes. Served from a real host it is a read-only viewer;
   // run locally it is the full editor. ?mode=edit / ?mode=view forces either.
@@ -88,6 +88,29 @@
   // live on the plan without printing across it.
   const NOTE_COLOR = '#7c3aed';
   const NOTE_R = 10;
+
+  // Layer switches. A viewing preference, not part of the drawing, so these
+  // live in localStorage rather than in the plan file.
+  const LAYERS_KEY = 'khaaka.layers.v1';
+  const layerVis = { notes: true, measurements: true, utilities: true };
+  try {
+    Object.assign(layerVis, JSON.parse(localStorage.getItem(LAYERS_KEY) || '{}'));
+  } catch { /* defaults are fine */ }
+
+  const layerOf = (o) =>
+    o.type === 'note' ? 'notes'
+      : o.type === 'fixture' ? 'utilities'
+        : (o.type === 'ruler' || o.type === 'measure') ? 'measurements'
+          : null;
+
+  // Hidden layers are neither drawn nor hit-tested — you cannot hover what
+  // you cannot see. Hover-to-measure on walls and openings is unaffected,
+  // which is the point of switching Measurements off: the drawing goes
+  // quiet, but any part of it still answers when you point at it.
+  const layerVisible = (o) => {
+    const l = layerOf(o);
+    return !l || layerVis[l];
+  };
 
   // A note's media is a plain list of URLs or repo-relative paths. The kind
   // is inferred rather than declared, so authoring one is just a paste.
@@ -554,7 +577,7 @@
     const p = worldToScreen(wx, wy);
     for (let i = state.objects.length - 1; i >= 0; i--) {
       const o = state.objects[i];
-      if (o.type !== 'ruler' || o.hidden) continue;
+      if (o.type !== 'ruler' || o.hidden || !layerVis.measurements) continue;
       // The label pill first: it is the biggest target and the one people
       // actually point at.
       const r = o._rulerLabel;
@@ -651,7 +674,7 @@
     const noteR = (NOTE_R + 3) / (state.pxPerMeter * state.view.zoom);
     for (let i = state.objects.length - 1; i >= 0; i--) {
       const o = state.objects[i];
-      if (o.type !== 'note' || o.hidden) continue;
+      if (o.type !== 'note' || o.hidden || !layerVis.notes) continue;
       if (Math.hypot(wx - o.x, wy - o.y) > noteR) continue;
       return { kind: 'note', id: o.id, sx, sy,
                text: o.text || '', lines: wrapNote(o.text || '(empty note)') };
@@ -662,7 +685,7 @@
     const fxR = (FIXTURE_R + 3) / (state.pxPerMeter * state.view.zoom);
     for (let i = state.objects.length - 1; i >= 0; i--) {
       const o = state.objects[i];
-      if (o.type !== 'fixture' || o.hidden) continue;
+      if (o.type !== 'fixture' || o.hidden || !layerVis.utilities) continue;
       if (Math.hypot(wx - o.x, wy - o.y) > fxR) continue;
       const meta = FIXTURES[o.kind] || {};
       return { kind: 'fixture', id: o.id, sx, sy,
@@ -681,7 +704,7 @@
             seg: { x1: o.x, y1: o.y, x2: ex, y2: ey, thickness: 0 },
           };
         }
-      } else if (o.type === 'measure') {
+      } else if (o.type === 'measure' && layerVis.measurements) {
         if (distToSegment(wx, wy, o.x1, o.y1, o.x2, o.y2) <= tol) {
           const len = Math.hypot(o.x2 - o.x1, o.y2 - o.y1);
           return {
@@ -949,16 +972,18 @@
 
     // Objects: two passes so dimension labels never get covered by other shapes
     for (const o of state.objects) {
-      if (o.type !== 'ruler') drawObject(o);
+      if (o.type !== 'ruler' && layerVisible(o)) drawObject(o);
     }
-    if (state.showDims) {
+    if (state.showDims && layerVis.measurements) {
       for (const o of state.objects) drawObjectDimensions(o);
     }
     // Rulers last, whatever their z-order. They are annotations about the
     // drawing rather than part of it, so a wall or a room added after one
     // must not bury its label.
-    for (const o of state.objects) {
-      if (o.type === 'ruler') drawObject(o);
+    if (layerVis.measurements) {
+      for (const o of state.objects) {
+        if (o.type === 'ruler') drawObject(o);
+      }
     }
     drawHoverReadout();
 
@@ -1518,6 +1543,21 @@
     noteCard.style.top = `${Math.round(y)}px`;
   }
 
+  // Layer switches.
+  for (const key of Object.keys(layerVis)) {
+    const box = document.getElementById(`lt-${key}`);
+    if (!box) continue;
+    box.checked = layerVis[key];
+    box.addEventListener('change', () => {
+      layerVis[key] = box.checked;
+      try { localStorage.setItem(LAYERS_KEY, JSON.stringify(layerVis)); } catch { /* ignore */ }
+      // Anything now hidden must not stay hovered or left open.
+      hover = null;
+      if (key === 'notes' && !box.checked) closeNoteCard();
+      draw();
+    });
+  }
+
   if (noteCard) {
     document.getElementById('note-close').addEventListener('click', closeNoteCard);
     // Clicks inside the card belong to the card, not the canvas underneath.
@@ -1781,7 +1821,8 @@
       const w0 = screenToWorld(sx, sy);
       const nr = (NOTE_R + 3) / (state.pxPerMeter * state.view.zoom);
       const pin = [...state.objects].reverse()
-        .find(o => o.type === 'note' && !o.hidden && Math.hypot(w0.x - o.x, w0.y - o.y) <= nr);
+        .find(o => o.type === 'note' && !o.hidden && layerVis.notes
+                   && Math.hypot(w0.x - o.x, w0.y - o.y) <= nr);
       if (pin) { openNoteCard(pin); if (!READONLY) setSelection([pin.id]); refreshAll(); return; }
       closeNoteCard();
     }
