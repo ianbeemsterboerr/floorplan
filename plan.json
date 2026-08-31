@@ -859,7 +859,139 @@
       "y": -3.4000000000000004,
       "text": "Plafondhoogte 2643-2654  (F: 2350)",
       "size": 15
+    },
+    {
+      "id": 57,
+      "type": "fixture",
+      "label": "wc",
+      "fill": "#e8f0ff",
+      "stroke": "#0369a1",
+      "strokeWidth": 2,
+      "kind": "water",
+      "x": 2.45,
+      "y": 7.25,
+      "rot": 0
+    },
+    {
+      "id": 58,
+      "type": "fixture",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#475569",
+      "strokeWidth": 2,
+      "kind": "drain",
+      "x": 2.65,
+      "y": 7.25,
+      "rot": 0
+    },
+    {
+      "id": 59,
+      "type": "fixture",
+      "label": "wastafel",
+      "fill": "#e8f0ff",
+      "stroke": "#0369a1",
+      "strokeWidth": 2,
+      "kind": "water",
+      "x": 1.5,
+      "y": 8.15,
+      "rot": 0
+    },
+    {
+      "id": 60,
+      "type": "fixture",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#475569",
+      "strokeWidth": 2,
+      "kind": "drain",
+      "x": 1.7,
+      "y": 8.15,
+      "rot": 0
+    },
+    {
+      "id": 61,
+      "type": "fixture",
+      "label": "douche",
+      "fill": "#e8f0ff",
+      "stroke": "#0369a1",
+      "strokeWidth": 2,
+      "kind": "water",
+      "x": 0.52,
+      "y": 8.1,
+      "rot": 0
+    },
+    {
+      "id": 62,
+      "type": "fixture",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#475569",
+      "strokeWidth": 2,
+      "kind": "drain",
+      "x": 0.72,
+      "y": 8.1,
+      "rot": 0
+    },
+    {
+      "id": 63,
+      "type": "fixture",
+      "label": "aanrecht",
+      "fill": "#e8f0ff",
+      "stroke": "#0369a1",
+      "strokeWidth": 2,
+      "kind": "water",
+      "x": 3.3,
+      "y": 8.2,
+      "rot": 0
+    },
+    {
+      "id": 64,
+      "type": "fixture",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#475569",
+      "strokeWidth": 2,
+      "kind": "drain",
+      "x": 3.5,
+      "y": 8.2,
+      "rot": 0
+    },
+    {
+      "id": 65,
+      "type": "fixture",
+      "label": "wasmachine",
+      "fill": "#e8f0ff",
+      "stroke": "#0369a1",
+      "strokeWidth": 2,
+      "kind": "water",
+      "x": 0.48,
+      "y": 9.9,
+      "rot": 0
+    },
+    {
+      "id": 66,
+      "type": "fixture",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#475569",
+      "strokeWidth": 2,
+      "kind": "drain",
+      "x": 0.68,
+      "y": 9.9,
+      "rot": 0
+    },
+    {
+      "id": 67,
+      "type": "fixture",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#a16207",
+      "strokeWidth": 2,
+      "kind": "gas",
+      "x": 2.13,
+      "y": 10.04,
+      "rot": 0
     }
   ],
-  "nextId": 57
+  "nextId": 68
 }

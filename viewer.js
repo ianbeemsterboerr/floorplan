@@ -14,6 +14,17 @@
   const HOVER_RED = '#d61f3f';
   const WALL_STROKE = '#4a2e1c';
 
+  // Services. One object type, `kind` picks the symbol.
+  const FIXTURES = {
+    socket: { label: 'Socket',       color: '#b45309' },
+    switch: { label: 'Switch',       color: '#b45309' },
+    light:  { label: 'Light point',  color: '#b45309' },
+    gas:    { label: 'Gas point',    color: '#a16207' },
+    water:  { label: 'Water supply', color: '#0369a1' },
+    drain:  { label: 'Drain',        color: '#475569' },
+  };
+  const FIXTURE_R = 9;
+
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
   const view = { x: 60, y: 60, zoom: 1 };
@@ -127,6 +138,10 @@
         const ex = o.x + Math.cos(rad) * o.w, ey = o.y + Math.sin(rad) * o.w;
         return { x: Math.min(o.x, ex), y: Math.min(o.y, ey),
                  w: Math.abs(ex - o.x), h: Math.abs(ey - o.y) };
+      }
+      case 'fixture': {
+        const r = (FIXTURE_R + 2) / scale();
+        return { x: o.x - r, y: o.y - r, w: r * 2, h: r * 2 };
       }
       case 'text': return { x: o.x, y: o.y - 0.3, w: 0.2 * (o.text || '').length, h: 0.4 };
       default: return null;
@@ -243,6 +258,13 @@
   function computeHover(wx, wy, sx, sy, coarse) {
     const grab = coarse ? 22 : 7;
     const tol = grab / scale();
+
+    const fx = hitFixture(wx, wy, coarse);
+    if (fx) {
+      const meta = FIXTURES[fx.kind] || {};
+      return { kind: 'fixture', id: fx.id, sx, sy,
+               text: fx.label ? `${meta.label} · ${fx.label}` : (meta.label || fx.kind) };
+    }
     for (let i = plan.objects.length - 1; i >= 0; i--) {
       const o = plan.objects[i];
       if (o.hidden) continue;
@@ -430,6 +452,8 @@
       ctx.fillRect(0, -4, w, 8);
       ctx.strokeRect(0, -4, w, 8);
       ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(w, 0); ctx.stroke();
+    } else if (o.type === 'fixture') {
+      drawFixtureSymbol(o);
     } else if (o.type === 'text') {
       const p = toScreen(o.x, o.y);
       ctx.fillStyle = o.fill || '#1c2433';
@@ -472,6 +496,88 @@
       }
     }
     ctx.restore();
+  }
+
+  // Service symbols, sized in screen pixels so they stay legible at any zoom.
+  function drawFixtureSymbol(o) {
+    const meta = FIXTURES[o.kind] || FIXTURES.socket;
+    const p = toScreen(o.x, o.y);
+    const R = FIXTURE_R;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate((o.rot || 0) * Math.PI / 180);
+    ctx.strokeStyle = o.stroke || meta.color;
+    ctx.fillStyle = o.stroke || meta.color;
+    ctx.lineWidth = 1.6;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    if (o.kind === 'socket') {
+      ctx.beginPath(); ctx.arc(0, 0, R, Math.PI, 0); ctx.closePath();
+      ctx.globalAlpha = 0.18; ctx.fill(); ctx.globalAlpha = 1; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-R, 0); ctx.lineTo(R, 0);
+      ctx.moveTo(0, 0); ctx.lineTo(0, R + 4); ctx.stroke();
+    } else if (o.kind === 'switch') {
+      ctx.beginPath(); ctx.arc(0, R * 0.6, 2.8, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(0, R * 0.6); ctx.lineTo(R * 0.95, -R * 0.75);
+      ctx.moveTo(R * 0.35, -R * 0.95); ctx.lineTo(R * 1.05, -R * 0.55);
+      ctx.stroke();
+    } else if (o.kind === 'light') {
+      ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.stroke();
+      const d = R * 0.707;
+      ctx.beginPath();
+      ctx.moveTo(-d, -d); ctx.lineTo(d, d);
+      ctx.moveTo(d, -d); ctx.lineTo(-d, d);
+      ctx.stroke();
+    } else if (o.kind === 'gas') {
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = Math.PI / 6 + i * Math.PI / 3;
+        const x = Math.cos(a) * R, y = Math.sin(a) * R;
+        if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+      }
+      ctx.closePath(); ctx.stroke();
+      ctx.font = '700 10px system-ui, sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('G', 0, 0.5);
+    } else if (o.kind === 'water') {
+      ctx.beginPath();
+      ctx.moveTo(0, -R);
+      ctx.bezierCurveTo(R * 1.05, -R * 0.1, R * 0.8, R, 0, R);
+      ctx.bezierCurveTo(-R * 0.8, R, -R * 1.05, -R * 0.1, 0, -R);
+      ctx.closePath();
+      ctx.globalAlpha = 0.18; ctx.fill(); ctx.globalAlpha = 1; ctx.stroke();
+    } else if (o.kind === 'drain') {
+      ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, -R * 0.6); ctx.lineTo(0, R * 0.45);
+      ctx.moveTo(-R * 0.45, -R * 0.05); ctx.lineTo(0, R * 0.5);
+      ctx.lineTo(R * 0.45, -R * 0.05);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    if (o.label) {
+      ctx.save();
+      ctx.fillStyle = '#475569';
+      ctx.font = '500 10px system-ui, sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillText(o.label, p.x, p.y + R + 6);
+      ctx.restore();
+    }
+  }
+
+  // Services are points, not spans, so hovering one names it rather than
+  // reporting a length.
+  function hitFixture(wx, wy, coarse) {
+    const r = ((coarse ? 20 : FIXTURE_R + 3)) / scale();
+    for (let i = plan.objects.length - 1; i >= 0; i--) {
+      const o = plan.objects[i];
+      if (o.type !== 'fixture' || o.hidden) continue;
+      if (Math.hypot(wx - o.x, wy - o.y) <= r) return o;
+    }
+    return null;
   }
 
   function drawHoverReadout() {
@@ -667,7 +773,7 @@
 
   // ---------- Boot ----------
 
-  fetch('plan.json?v=3')
+  fetch('plan.json?v=4')
     .then(res => res.json())
     .then(data => {
       plan = data;

@@ -36,3 +36,17 @@ Rooms are lettered as they were on the original measurement sheets:
 
 All dimensions are internal (clear-wall) and in millimetres. Ceiling heights
 are noted above the drawing.
+
+Service symbols follow IEC convention where one exists:
+
+| | |
+|---|---|
+| Half-disc on a stem | socket outlet |
+| Pivot with a lever arm | switch |
+| Circle crossed through | light point |
+| Hexagon marked **G** | gas |
+| Droplet | water supply |
+| Circle with flow into it | drain |
+
+Only the plumbing is on the plan so far, scaled off the estate-agent drawing
+rather than measured, so treat those positions as approximate.
