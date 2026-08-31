@@ -464,13 +464,18 @@ const MUTATORS = {
   },
 
   'add-note'(d, flags) {
-    known(flags, ['at', 'text', 'label', 'locked', 'hidden'], 'add-note');
+    known(flags, ['at', 'text', 'media', 'label', 'locked', 'hidden'], 'add-note');
     const at = parsePoint(need(flags, 'at', 'add-note'), d.units, '--at');
     const text = String(need(flags, 'text', 'add-note'));
-    const o = applyCommon(makeObject(d, 'note', { x: at.x, y: at.y, text, stroke: NOTE_COLOR }), flags);
+    // --media is a space-separated list of paths or URLs; the kind is
+    // inferred when the note is opened.
+    const media = (flags.media !== undefined && flags.media !== true)
+      ? String(flags.media).trim().split(/\s+/).filter(Boolean) : [];
+    const o = applyCommon(makeObject(d, 'note', { x: at.x, y: at.y, text, media, stroke: NOTE_COLOR }), flags);
     d.objects.push(o);
     const n = d.objects.filter((x) => x.type === 'note').length;
-    return `note ${n} (#${o.id}) at ${fmtLen(at.x, d.units)}, ${fmtLen(at.y, d.units)}`;
+    return `note ${n} (#${o.id}) at ${fmtLen(at.x, d.units)}, ${fmtLen(at.y, d.units)}`
+      + (media.length ? ` + ${media.length} media` : '');
   },
 
   'add-fixture'(d, flags) {
@@ -678,7 +683,8 @@ function describe(d, o) {
     case 'fixture':
       return `${(FIXTURES[o.kind] || {}).label || o.kind}  at ${fmtLen(o.x, u)}, ${fmtLen(o.y, u)}${o.rot ? `  rot ${o.rot}°` : ''}`;
     case 'note':
-      return `at ${fmtLen(o.x, u)}, ${fmtLen(o.y, u)}  "${o.text}"`;
+      return `at ${fmtLen(o.x, u)}, ${fmtLen(o.y, u)}  "${o.text}"`
+        + ((o.media || []).length ? `  [${o.media.length} media]` : '');
     case 'text':
       return `at ${fmtLen(o.x, u)}, ${fmtLen(o.y, u)}  "${o.text}"  ${o.size || 14}px`;
     default:
@@ -912,8 +918,10 @@ Adding objects
                      beyond the last one.
   add-measure <file> --from X,Y --to X,Y [--label L]
   add-polygon <file> --points "X,Y X,Y X,Y ..." [--label L] [--area]
-  add-note    <file> --at X,Y --text "..."
-                     numbered pin; the text shows when hovered
+  add-note    <file> --at X,Y --text "..." [--media "PATH_OR_URL ..."]
+                     numbered pin; text on hover, media when clicked.
+                     --media is space separated: images (a path under app/,
+                     or a URL) and Instagram reel links get a preview.
   add-fixture <file> --kind KIND --at X,Y [--rot DEG] [--label L]
                      KIND: socket | switch | light | gas | water | drain
   add-text    <file> (--at X,Y | --above) --text "..." [--size PX] [--gap LEN]

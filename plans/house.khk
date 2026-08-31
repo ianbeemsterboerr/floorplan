@@ -139,3 +139,6 @@ add-fixture --kind gas --at 2130,10040
 # ── Notes ────────────────────────────────────────────────────────────────
 add-note --at 2200,7600 --text "F Badkamer: laagste plafond van de woning, 2350. Twee nissen rechts."
 add-note --at 2400,10150 --text "Meterkast valt buiten de woning; gas en elektra komen hier binnen."
+# Media: a path is resolved relative to app/, so pictures live in app/assets/.
+# An Instagram reel link gets an inline preview.
+add-note --at 4200,7600 --text "B Keuken: aanrecht vervangen." --media "assets/example.png"

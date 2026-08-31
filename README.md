@@ -44,6 +44,31 @@ whole run, so every piece of the drawing can be measured on its own.
 
 Drag to pan, scroll or pinch to zoom.
 
+## Notes
+
+Press `A` and click to drop a note. It shows as a numbered pin; **hover** it
+for the text, **click** it to open a card that can also carry pictures and
+Instagram reels.
+
+```bash
+node cli/khaaka.mjs add-note plans/house.json \
+  --at 4200,7600 --text "Aanrecht vervangen" \
+  --media "assets/aanrecht.jpg https://www.instagram.com/reel/XXXX/"
+```
+
+`--media` is a space-separated list and the kind is worked out from the item:
+
+| Item | Shown as |
+|---|---|
+| A path such as `assets/tap.jpg` | picture, resolved relative to `app/` |
+| A URL ending in an image extension | picture |
+| An Instagram `reel` / `p` / `tv` link | inline preview, plus a link out |
+| Anything else | a link |
+
+Pictures live in `app/assets/` so they are published with the site. The
+Instagram preview is a live embed from instagram.com, so it needs the post to
+be public and it will not appear if the browser blocks third-party frames.
+
 ## Reading the plan
 
 Rooms are lettered as they were on the original measurement sheets:

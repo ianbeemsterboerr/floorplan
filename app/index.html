@@ -244,6 +244,15 @@
       <canvas id="canvas"></canvas>
       <div class="hint" id="hint" hidden>Pick a tool and start drawing. Hand tool pans by default, and Ctrl + click-drag selects. Mouse tool does free select. Wheel to zoom, middle-drag to pan. Right-click switches to Hand / Pan.</div>
       <div class="toast" id="toast" hidden></div>
+
+      <!-- Note card: notes can carry images and embeds, which cannot live on
+           a canvas, so the body of a note is real DOM laid over it. -->
+      <div class="note-card" id="note-card" hidden role="dialog" aria-label="Note">
+        <button class="note-close" id="note-close" type="button" aria-label="Close">&times;</button>
+        <div class="note-num" id="note-num"></div>
+        <div class="note-text" id="note-text"></div>
+        <div class="note-media" id="note-media"></div>
+      </div>
     </section>
 
     <!-- ========================= PROPERTIES PANEL ========================= -->

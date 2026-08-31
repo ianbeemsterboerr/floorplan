@@ -1001,7 +1001,8 @@
       "strokeWidth": 2,
       "x": 2.2,
       "y": 7.6,
-      "text": "F Badkamer: laagste plafond van de woning, 2350. Twee nissen rechts."
+      "text": "F Badkamer: laagste plafond van de woning, 2350. Twee nissen rechts.",
+      "media": []
     },
     {
       "id": 69,
@@ -1012,8 +1013,23 @@
       "strokeWidth": 2,
       "x": 2.4,
       "y": 10.15,
-      "text": "Meterkast valt buiten de woning; gas en elektra komen hier binnen."
+      "text": "Meterkast valt buiten de woning; gas en elektra komen hier binnen.",
+      "media": []
+    },
+    {
+      "id": 70,
+      "type": "note",
+      "label": "",
+      "fill": "#e8f0ff",
+      "stroke": "#7c3aed",
+      "strokeWidth": 2,
+      "x": 4.2,
+      "y": 7.6,
+      "text": "B Keuken: aanrecht vervangen.",
+      "media": [
+        "assets/example.png"
+      ]
     }
   ],
-  "nextId": 70
+  "nextId": 71
 }

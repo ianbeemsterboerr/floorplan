@@ -89,6 +89,25 @@
   const NOTE_COLOR = '#7c3aed';
   const NOTE_R = 10;
 
+  // A note's media is a plain list of URLs or repo-relative paths. The kind
+  // is inferred rather than declared, so authoring one is just a paste.
+  function mediaKind(src) {
+    const u = String(src).trim();
+    if (/^https?:\/\/(www\.)?instagram\.com\/(reel|reels|p|tv)\//i.test(u)) return 'instagram';
+    if (/\.(png|jpe?g|gif|webp|avif|svg)(\?|#|$)/i.test(u)) return 'image';
+    if (/^https?:\/\//i.test(u)) return 'link';
+    return 'image';                      // a bare path is taken to be a picture
+  }
+
+  // Instagram's oEmbed needs an app token these days, but the /embed page
+  // does not, and it renders the poster frame — which is the preview we want.
+  function instagramEmbed(url) {
+    const m = String(url).match(/instagram\.com\/(reel|reels|p|tv)\/([A-Za-z0-9_-]+)/i);
+    if (!m) return null;
+    const kind = m[1].toLowerCase() === 'reels' ? 'reel' : m[1].toLowerCase();
+    return `https://www.instagram.com/${kind}/${m[2]}/embed/captioned/`;
+  }
+
   const STROKE_SWATCHES = [
     '#cbd5e1', '#94a3b8', '#7da3e8', '#7ec295', '#e88b9f',
     '#a48de0', '#c8a05a', '#1f3a8a', '#a3b8d8', '#d4b896',
@@ -1019,6 +1038,7 @@
       ctx.restore();
     }
 
+    positionNoteCard();
     updateStatus();
   }
 
@@ -1415,6 +1435,95 @@
     return out.filter(l => l.length);
   }
 
+  // ---------- Note card ----------
+  // Hovering a note shows its text on the canvas; clicking one opens this,
+  // which is real DOM so it can hold pictures and embeds.
+
+  const noteCard = document.getElementById('note-card');
+  const noteCardNum = document.getElementById('note-num');
+  const noteCardText = document.getElementById('note-text');
+  const noteCardMedia = document.getElementById('note-media');
+  let openNoteId = null;
+
+  function closeNoteCard() {
+    if (openNoteId === null) return;
+    openNoteId = null;
+    if (noteCard) { noteCard.hidden = true; noteCardMedia.innerHTML = ''; }
+  }
+
+  function openNoteCard(o) {
+    if (!noteCard) return;
+    openNoteId = o.id;
+    noteCardNum.textContent = String(noteNumber(o));
+    noteCardText.textContent = o.text || '';
+    noteCardMedia.innerHTML = '';
+
+    for (const src of (o.media || [])) {
+      const kind = mediaKind(src);
+      if (kind === 'image') {
+        const fig = document.createElement('figure');
+        const img = document.createElement('img');
+        img.src = src;
+        img.loading = 'lazy';
+        img.alt = o.text || 'Note image';
+        img.addEventListener('error', () => {
+          fig.innerHTML = '';
+          const warn = document.createElement('p');
+          warn.className = 'note-fail';
+          warn.textContent = `Could not load ${src}`;
+          fig.appendChild(warn);
+        });
+        fig.appendChild(img);
+        noteCardMedia.appendChild(fig);
+      } else if (kind === 'instagram') {
+        const frame = document.createElement('iframe');
+        frame.className = 'note-embed';
+        frame.src = instagramEmbed(src);
+        frame.loading = 'lazy';
+        frame.allowFullscreen = true;
+        frame.referrerPolicy = 'no-referrer-when-downgrade';
+        frame.title = 'Instagram';
+        noteCardMedia.appendChild(frame);
+        const a = document.createElement('a');
+        a.className = 'note-link';
+        a.href = src; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        a.textContent = 'Open on Instagram';
+        noteCardMedia.appendChild(a);
+      } else {
+        const a = document.createElement('a');
+        a.className = 'note-link';
+        a.href = src; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        a.textContent = src;
+        noteCardMedia.appendChild(a);
+      }
+    }
+    noteCard.hidden = false;
+    positionNoteCard();
+  }
+
+  // Keep the card beside its pin as the plan is panned or zoomed.
+  function positionNoteCard() {
+    if (openNoteId === null || !noteCard) return;
+    const o = state.objects.find(x => x.id === openNoteId);
+    if (!o) { closeNoteCard(); return; }
+    const wrap = noteCard.parentElement.getBoundingClientRect();
+    const p = worldToScreen(o.x, o.y);
+    const w = noteCard.offsetWidth || 300;
+    const h = noteCard.offsetHeight || 200;
+    let x = p.x + NOTE_R + 10;
+    let y = p.y - 10;
+    if (x + w > wrap.width - 8) x = Math.max(8, p.x - NOTE_R - 10 - w);
+    if (y + h > wrap.height - 8) y = Math.max(8, wrap.height - 8 - h);
+    noteCard.style.left = `${Math.round(x)}px`;
+    noteCard.style.top = `${Math.round(y)}px`;
+  }
+
+  if (noteCard) {
+    document.getElementById('note-close').addEventListener('click', closeNoteCard);
+    // Clicks inside the card belong to the card, not the canvas underneath.
+    noteCard.addEventListener('mousedown', (e) => e.stopPropagation());
+  }
+
   function drawDimension(x1, y1, x2, y2, label, vertical = false, perpOffset = 0, color = null) {
     const a = worldToScreen(x1, y1);
     const b = worldToScreen(x2, y2);
@@ -1667,6 +1776,16 @@
   canvas.addEventListener('mousedown', (e) => {
     const r = canvas.getBoundingClientRect();
     const sx = e.clientX - r.left, sy = e.clientY - r.top;
+    // A note pin opens its card, whatever the mode.
+    if (e.button === 0) {
+      const w0 = screenToWorld(sx, sy);
+      const nr = (NOTE_R + 3) / (state.pxPerMeter * state.view.zoom);
+      const pin = [...state.objects].reverse()
+        .find(o => o.type === 'note' && !o.hidden && Math.hypot(w0.x - o.x, w0.y - o.y) <= nr);
+      if (pin) { openNoteCard(pin); if (!READONLY) setSelection([pin.id]); refreshAll(); return; }
+      closeNoteCard();
+    }
+
     // View mode: the only thing a press can do is pan.
     if (READONLY) {
       if (e.button === 2) return;
@@ -3994,6 +4113,7 @@
     const target = e.target;
     if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
     // View mode keeps the view controls and nothing else.
+    if (e.key === 'Escape' && openNoteId !== null) { closeNoteCard(); return; }
     if (READONLY) {
       if (e.key === '+' || e.key === '=') zoomBy(1.2);
       else if (e.key === '-') zoomBy(1 / 1.2);
