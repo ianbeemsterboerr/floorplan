@@ -1991,3 +1991,81 @@ body.view-mode .canvas-wrap { cursor: grab; }
 }
 .layer-toggles input { width: 14px; height: 14px; margin: 0; cursor: pointer; accent-color: #4a76f5; }
 .layer-toggles label:hover span { color: #4a76f5; }
+
+/* ── Note editor ──────────────────────────────────────────────────────────
+   A small rich editor. Pasted content is normalised into blocks on save, so
+   no foreign HTML is ever stored or re-rendered.                            */
+.note-editor-backdrop {
+  position: fixed; inset: 0; z-index: 80;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px; background: rgba(18, 24, 38, 0.38);
+}
+/* A class rule beats the UA's [hidden], so say it explicitly or the
+   invisible backdrop swallows every click on the canvas. */
+.note-editor-backdrop[hidden] { display: none; }
+.note-editor {
+  display: flex; flex-direction: column;
+  width: min(560px, 100%); max-height: min(700px, 86vh);
+  background: #fff; color: #1c2433;
+  border-radius: 12px; box-shadow: 0 22px 60px rgba(18, 24, 38, 0.3);
+  overflow: hidden;
+}
+.note-editor-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-bottom: 1px solid #e6eaf2;
+}
+.note-editor-head strong { font-size: 14px; }
+.note-editor-tools { margin-left: auto; display: flex; gap: 6px; }
+.note-editor-tools button,
+.note-editor-tools .ne-file {
+  font: inherit; font-size: 12.5px; padding: 4px 10px; cursor: pointer;
+  background: #f4f6fa; color: #1c2433;
+  border: 1px solid #dfe4ee; border-radius: 6px;
+}
+.note-editor-tools button:hover,
+.note-editor-tools .ne-file:hover { background: #eaeef7; }
+.note-editor-body {
+  flex: 1; min-height: 200px; overflow: auto;
+  padding: 14px 16px; font-size: 13.5px; line-height: 1.55;
+  outline: none;
+}
+.note-editor-body:empty::before {
+  content: 'Write the note…'; color: #97a1b4;
+}
+.note-editor-body h3 {
+  margin: 12px 0 4px; font-size: 14px; font-weight: 700;
+}
+.note-editor-body h3:first-child { margin-top: 0; }
+.note-editor-body p { margin: 0 0 8px; }
+.note-editor-body p b { font-weight: 700; }
+.note-editor-body img {
+  display: block; max-width: 100%; height: auto; margin: 8px 0;
+  border: 1px solid #dfe4ee; border-radius: 7px;
+}
+.note-editor-body .ne-embed {
+  display: block; margin: 8px 0; padding: 8px 10px;
+  font-size: 12.5px; color: #1f3a8a; word-break: break-all;
+  background: #f4f6fa; border: 1px dashed #9db4e8; border-radius: 7px;
+}
+.note-editor-foot {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px; border-top: 1px solid #e6eaf2; background: #fbfcfe;
+}
+.note-editor-foot .ne-hint { font-size: 12px; color: #5b6577; }
+.note-editor-foot .ne-size { font-size: 12px; color: #97a1b4; }
+.note-editor-foot button { margin-left: 0; }
+.note-editor-foot #ne-cancel { margin-left: auto; }
+.note-editor-foot button {
+  font: inherit; font-size: 13px; padding: 6px 14px; cursor: pointer;
+  border-radius: 7px; border: 1px solid #dfe4ee; background: #fff;
+}
+.note-editor-foot button.primary {
+  background: #4a76f5; border-color: #4a76f5; color: #fff; font-weight: 600;
+}
+.note-editor-foot button.primary:hover { background: #3d66dd; }
+
+/* Card rendering of the saved blocks */
+.note-card h3 { margin: 10px 0 3px; font-size: 13.5px; font-weight: 700; }
+.note-card h3:first-child { margin-top: 0; }
+.note-card p { margin: 0 0 7px; }
+.note-card p b { font-weight: 700; }

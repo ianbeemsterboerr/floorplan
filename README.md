@@ -59,9 +59,22 @@ Drag to pan, scroll or pinch to zoom.
 
 ## Notes
 
-Press `A` and click to drop a note. It shows as a numbered pin; **hover** it
-for the text, **click** it to open a card that can also carry pictures and
-Instagram reels.
+Press `A` and click to drop a note; double-click a pin to edit it again. It
+shows as a numbered pin — **hover** for the text, **click** to open the card.
+
+The editor takes a paste and works out what you meant:
+
+| Paste | Becomes |
+|---|---|
+| A picture from the clipboard | an image, downscaled to 1400 px so the plan file stays small |
+| An Instagram reel link | an inline preview |
+| An image URL | a picture |
+| A run of **WhatsApp Desktop** messages | one paragraph per message, sender in bold |
+| Anything else | a paragraph per line |
+
+**Title** and **Body** retag the current line, so a note can have a heading.
+Pasted HTML is discarded on purpose — everything is normalised into blocks on
+save, so a note can never carry markup in from another app.
 
 ```bash
 node cli/khaaka.mjs add-note plans/house.json \

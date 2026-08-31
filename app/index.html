@@ -13,7 +13,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet"
   />
-  <link rel="stylesheet" href="styles.css?v=7" />
+  <link rel="stylesheet" href="styles.css?v=8" />
 </head>
 <body>
   <!-- ======================== Inline icon library ======================== -->
@@ -332,6 +332,31 @@
   <!-- Custom tooltip (single instance, controlled by app.js) -->
   <div id="tooltip" class="tip" hidden role="tooltip" aria-hidden="true"></div>
 
+  <!-- Note editor: paste pictures, Instagram links, or a run of WhatsApp
+       messages. Never stores pasted HTML — everything is normalised into
+       blocks on save. -->
+  <div id="note-editor-backdrop" class="note-editor-backdrop" hidden>
+    <div class="note-editor" role="dialog" aria-modal="true" aria-label="Edit note">
+      <div class="note-editor-head">
+        <strong id="note-editor-title">Note</strong>
+        <div class="note-editor-tools">
+          <button type="button" id="ne-title" title="Make this line a title">Title</button>
+          <button type="button" id="ne-para" title="Make this line a paragraph">Body</button>
+          <label class="ne-file" title="Insert a picture">
+            Picture<input type="file" id="ne-image" accept="image/*" hidden />
+          </label>
+        </div>
+      </div>
+      <div class="note-editor-body" id="ne-body" contenteditable="true" spellcheck="false"></div>
+      <div class="note-editor-foot">
+        <span class="ne-hint">Paste a picture, an Instagram link, or a run of WhatsApp messages</span>
+        <span class="ne-size" id="ne-size"></span>
+        <button type="button" id="ne-cancel" class="ghost">Cancel</button>
+        <button type="button" id="ne-save" class="primary">Save</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal dialog (populated by app.js — alert / confirm / prompt) -->
   <div id="modal-backdrop" class="modal-backdrop" hidden aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
@@ -345,6 +370,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=7"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>

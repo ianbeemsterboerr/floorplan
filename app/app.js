@@ -6,7 +6,7 @@
 
   // Build tag — check this in the browser console to confirm which script
   // the page actually loaded. Bump it alongside the ?v= in index.html.
-  const BUILD = 7;
+  const BUILD = 8;
 
   // One app, two modes. Served from a real host it is a read-only viewer;
   // run locally it is the full editor. ?mode=edit / ?mode=view forces either.
@@ -677,7 +677,7 @@
       if (o.type !== 'note' || o.hidden || !layerVis.notes) continue;
       if (Math.hypot(wx - o.x, wy - o.y) > noteR) continue;
       return { kind: 'note', id: o.id, sx, sy,
-               text: o.text || '', lines: wrapNote(o.text || '(empty note)') };
+               text: noteSummary(o), lines: wrapNote(noteSummary(o)) };
     }
 
     // Services are points, not spans, so hovering one names it instead of
@@ -1460,6 +1460,74 @@
     return out.filter(l => l.length);
   }
 
+  // ---------- Note content ----------
+  // A note is stored as a list of blocks, never as HTML: nothing pasted is
+  // kept verbatim, so nothing pasted can be re-rendered as markup.
+  //   { t:'h',     s }            a title
+  //   { t:'p',     s, lead? }     a paragraph, optionally with a bold lead-in
+  //   { t:'img',   s }            a data URL or a path under app/
+  //   { t:'embed', s }            an Instagram link
+  //   { t:'link',  s }            anything else
+
+  // Older notes carry text + media; read them as blocks so both render alike.
+  function noteBlocks(o) {
+    if (Array.isArray(o.blocks) && o.blocks.length) return o.blocks;
+    const out = [];
+    if (o.text) out.push({ t: 'p', s: o.text });
+    for (const src of (o.media || [])) {
+      const kind = mediaKind(src);
+      out.push({ t: kind === 'instagram' ? 'embed' : kind === 'image' ? 'img' : 'link', s: src });
+    }
+    return out;
+  }
+
+  // Plain-text summary, for the hover tooltip and the Layers panel.
+  const noteSummary = (o) =>
+    noteBlocks(o).filter(b => b.t === 'h' || b.t === 'p')
+      .map(b => (b.lead ? `${b.lead} ` : '') + b.s).join(' — ') || '(no text)';
+
+  // WhatsApp Desktop copies a run of messages as
+  //   [15/03/2026, 14:32:11] Ian: text
+  // with continuation lines belonging to the message above. Turn each
+  // message into its own paragraph, the sender as the bold lead.
+  const WA_LINE = /^\[?\s*\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4},?\s+\d{1,2}:\d{2}(?::\d{2})?(?:\s*[APap]\.?[Mm]\.?)?\s*\]?\s*(?:-\s*)?([^:\n]{1,60}?):\s?([\s\S]*)$/;
+
+  function parseWhatsApp(text) {
+    const lines = String(text).replace(/\u202f|\u200e/g, ' ').split(/\r?\n/);
+    const msgs = [];
+    let hits = 0;
+    for (const line of lines) {
+      const m = line.match(WA_LINE);
+      if (m) {
+        hits++;
+        msgs.push({ lead: m[1].trim(), s: m[2].trim() });
+      } else if (msgs.length && line.trim()) {
+        msgs[msgs.length - 1].s += '\n' + line.trim();
+      } else if (line.trim()) {
+        msgs.push({ lead: '', s: line.trim() });
+      }
+    }
+    // Only claim it as a chat when most of it actually looks like one.
+    return hits >= 1 && hits >= msgs.length / 2 ? msgs.filter(m => m.s || m.lead) : null;
+  }
+
+  // Pasted photographs go in as data URLs, so they travel with the plan file.
+  // Downscale first, or one screenshot doubles the size of the whole layout.
+  async function shrinkImage(file, max = 1400, quality = 0.82) {
+    const bmp = await createImageBitmap(file);
+    const factor = Math.min(1, max / Math.max(bmp.width, bmp.height));
+    const w = Math.max(1, Math.round(bmp.width * factor));
+    const h = Math.max(1, Math.round(bmp.height * factor));
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    c.getContext('2d').drawImage(bmp, 0, 0, w, h);
+    if (bmp.close) bmp.close();
+    const webp = c.toDataURL('image/webp', quality);
+    // Safari used to hand back a PNG when asked for WebP; take whatever is smaller.
+    const jpeg = c.toDataURL('image/jpeg', quality);
+    return webp.length <= jpeg.length ? webp : jpeg;
+  }
+
   // ---------- Note card ----------
   // Hovering a note shows its text on the canvas; clicking one opens this,
   // which is real DOM so it can hold pictures and embeds.
@@ -1480,11 +1548,29 @@
     if (!noteCard) return;
     openNoteId = o.id;
     noteCardNum.textContent = String(noteNumber(o));
-    noteCardText.textContent = o.text || '';
+    noteCardText.textContent = '';
     noteCardMedia.innerHTML = '';
 
-    for (const src of (o.media || [])) {
-      const kind = mediaKind(src);
+    for (const block of noteBlocks(o)) {
+      if (block.t === 'h') {
+        const h = document.createElement('h3');
+        h.textContent = block.s;
+        noteCardMedia.appendChild(h);
+        continue;
+      }
+      if (block.t === 'p') {
+        const para = document.createElement('p');
+        if (block.lead) {
+          const b = document.createElement('b');
+          b.textContent = block.lead + ' ';
+          para.appendChild(b);
+        }
+        para.appendChild(document.createTextNode(block.s));
+        noteCardMedia.appendChild(para);
+        continue;
+      }
+      const src = block.s;
+      const kind = block.t === 'img' ? 'image' : block.t === 'embed' ? 'instagram' : 'link';
       if (kind === 'image') {
         const fig = document.createElement('figure');
         const img = document.createElement('img');
@@ -1541,6 +1627,269 @@
     if (y + h > wrap.height - 8) y = Math.max(8, wrap.height - 8 - h);
     noteCard.style.left = `${Math.round(x)}px`;
     noteCard.style.top = `${Math.round(y)}px`;
+  }
+
+  // ---------- Note editor ----------
+
+  const neBackdrop = document.getElementById('note-editor-backdrop');
+  const neBody = document.getElementById('ne-body');
+  const neSize = document.getElementById('ne-size');
+  let editingNote = null;      // { id } for an existing note, or { at } for a new one
+
+  const el = (tag, text) => {
+    const n = document.createElement(tag);
+    if (text != null) n.textContent = text;
+    return n;
+  };
+
+  function blockToNode(b) {
+    if (b.t === 'h') return el('h3', b.s);
+    if (b.t === 'img') {
+      const img = el('img');
+      img.src = b.s;
+      return img;
+    }
+    if (b.t === 'embed' || b.t === 'link') {
+      const a = el('div', b.s);
+      a.className = 'ne-embed';
+      a.dataset.kind = b.t;
+      a.contentEditable = 'false';
+      return a;
+    }
+    const p = el('p');
+    if (b.lead) p.appendChild(el('b', b.lead + ' '));
+    p.appendChild(document.createTextNode(b.s));
+    return p;
+  }
+
+  // Read the editor back out as blocks. Only these shapes survive, which is
+  // what keeps arbitrary pasted markup out of the file.
+  function readEditorBlocks() {
+    normaliseEditor();
+    const out = [];
+    for (const node of neBody.childNodes) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const t = node.textContent.trim();
+        if (t) out.push({ t: 'p', s: t });
+        continue;
+      }
+      if (node.nodeType !== Node.ELEMENT_NODE) continue;
+      const tag = node.tagName.toLowerCase();
+      if (tag === 'img') { out.push({ t: 'img', s: node.getAttribute('src') }); continue; }
+      if (node.classList.contains('ne-embed')) {
+        out.push({ t: node.dataset.kind === 'link' ? 'link' : 'embed', s: node.textContent.trim() });
+        continue;
+      }
+      const inner = node.querySelector('img');
+      if (inner) { out.push({ t: 'img', s: inner.getAttribute('src') }); continue; }
+      const text = node.textContent.replace(/\u00a0/g, ' ').trim();
+      if (!text) continue;
+      if (tag === 'h3') { out.push({ t: 'h', s: text }); continue; }
+      const lead = node.querySelector('b');
+      if (lead && node.firstChild === lead) {
+        const leadText = lead.textContent.trim();
+        out.push({ t: 'p', lead: leadText, s: text.slice(leadText.length).trim() });
+      } else {
+        out.push({ t: 'p', s: text });
+      }
+    }
+    return out;
+  }
+
+  function normaliseEditor() {
+    const sel = window.getSelection();
+    const anchor = sel && sel.anchorNode;
+    const offset = sel ? sel.anchorOffset : 0;
+    let carried = null;
+    for (const node of [...neBody.childNodes]) {
+      if (node.nodeType !== Node.TEXT_NODE) continue;
+      if (!node.textContent.trim()) { node.remove(); continue; }
+      const para = el('p');
+      node.replaceWith(para);
+      para.appendChild(node);
+      if (node === anchor) carried = node;   // same node, new parent
+    }
+    if (!neBody.firstElementChild) neBody.appendChild(el('p'));
+    // Wrapping a node the caret was sitting in would otherwise throw the
+    // cursor to the start, scrambling whatever is typed next.
+    if (carried) {
+      const r = document.createRange();
+      r.setStart(carried, Math.min(offset, carried.textContent.length));
+      r.collapse(true);
+      sel.removeAllRanges(); sel.addRange(r);
+    }
+  }
+
+  function caretToEndOf(node) {
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges(); sel.addRange(range);
+  }
+
+  function currentBlockEl() {
+    const sel = window.getSelection();
+    if (!sel || !sel.anchorNode) return neBody.lastElementChild;
+    if (sel.anchorNode === neBody) return neBody.lastElementChild;
+    let n = sel.anchorNode;
+    while (n && n.parentNode !== neBody) n = n.parentNode;
+    return (n && n.nodeType === Node.ELEMENT_NODE) ? n : neBody.lastElementChild;
+  }
+
+  function setBlockTag(tag) {
+    normaliseEditor();
+    const cur = currentBlockEl();
+    if (!cur || cur.tagName.toLowerCase() === tag) return;
+    if (cur.classList.contains('ne-embed') || cur.tagName.toLowerCase() === 'img') return;
+    const next = el(tag);
+    while (cur.firstChild) next.appendChild(cur.firstChild);
+    cur.replaceWith(next);
+    const range = document.createRange();
+    range.selectNodeContents(next);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges(); sel.addRange(range);
+    neBody.focus();
+    updateEditorSize();
+  }
+
+  function insertBlocks(nodes) {
+    normaliseEditor();
+    const cur = currentBlockEl();
+    const frag = document.createDocumentFragment();
+    nodes.forEach(n => frag.appendChild(n));
+    const last = frag.lastChild;
+    const blank = cur && !cur.textContent.trim() && !cur.querySelector('img')
+      && !cur.classList.contains('ne-embed');
+    if (blank) cur.replaceWith(frag);
+    else if (cur) cur.after(frag);
+    else neBody.appendChild(frag);
+    if (last) {
+      const range = document.createRange();
+      range.selectNodeContents(last);
+      range.collapse(false);
+      const sel = window.getSelection();
+      sel.removeAllRanges(); sel.addRange(range);
+    }
+    updateEditorSize();
+  }
+
+  function updateEditorSize() {
+    let bytes = 0;
+    neBody.querySelectorAll('img').forEach(i => { bytes += (i.getAttribute('src') || '').length; });
+    neSize.textContent = bytes > 40000 ? `pictures ≈ ${Math.round(bytes / 1024)} KB` : '';
+  }
+
+  async function insertImageFile(file) {
+    try {
+      const src = await shrinkImage(file);
+      const img = el('img');
+      img.src = src;
+      insertBlocks([img]);
+    } catch (err) {
+      console.error(err);
+      flash('Could not read that picture');
+    }
+  }
+
+  if (neBody) {
+    neBody.addEventListener('paste', async (e) => {
+      const dt = e.clipboardData;
+      if (!dt) return;
+      const file = [...(dt.files || [])].find(f => f.type.startsWith('image/'))
+        || [...(dt.items || [])].filter(i => i.type.startsWith('image/')).map(i => i.getAsFile())[0];
+      if (file) { e.preventDefault(); await insertImageFile(file); return; }
+
+      // Everything else comes in as plain text — pasted HTML is discarded on
+      // purpose, so the note can never carry markup from another app.
+      const text = dt.getData('text/plain');
+      if (!text) return;
+      e.preventDefault();
+
+      const url = text.trim();
+      if (/^https?:\/\/\S+$/.test(url)) {
+        const kind = mediaKind(url);
+        if (kind === 'image') { const i = el('img'); i.src = url; insertBlocks([i]); return; }
+        insertBlocks([blockToNode({ t: kind === 'instagram' ? 'embed' : 'link', s: url })]);
+        return;
+      }
+
+      const chat = parseWhatsApp(text);
+      if (chat) {
+        insertBlocks(chat.map(m => blockToNode({ t: 'p', lead: m.lead, s: m.s })));
+        flash(`Pasted ${chat.length} message${chat.length === 1 ? '' : 's'}`);
+        return;
+      }
+      insertBlocks(text.split(/\n{2,}|\n/).map(l => l.trim()).filter(Boolean)
+        .map(line => blockToNode({ t: 'p', s: line })));
+    });
+
+    neBody.addEventListener('input', () => { normaliseEditor(); updateEditorSize(); });
+    neBody.addEventListener('keydown', (e) => {
+      e.stopPropagation();     // the canvas shortcuts must not fire while typing
+      if (e.key === 'Escape') { e.preventDefault(); closeNoteEditor(); }
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); saveNoteEditor(); }
+    });
+    document.getElementById('ne-title').addEventListener('click', () => setBlockTag('h3'));
+    document.getElementById('ne-para').addEventListener('click', () => setBlockTag('p'));
+    document.getElementById('ne-image').addEventListener('change', async (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (f) await insertImageFile(f);
+      e.target.value = '';
+    });
+    document.getElementById('ne-cancel').addEventListener('click', closeNoteEditor);
+    document.getElementById('ne-save').addEventListener('click', saveNoteEditor);
+    neBackdrop.addEventListener('mousedown', (e) => {
+      if (e.target === neBackdrop) closeNoteEditor();
+    });
+  }
+
+  function openNoteEditor(target) {
+    if (READONLY || !neBackdrop) return;
+    editingNote = target;
+    const existing = target.id != null ? state.objects.find(o => o.id === target.id) : null;
+    document.getElementById('note-editor-title').textContent = existing ? 'Edit note' : 'New note';
+    neBody.innerHTML = '';
+    const blocks = existing ? noteBlocks(existing) : [];
+    if (blocks.length) blocks.forEach(b => neBody.appendChild(blockToNode(b)));
+    else neBody.appendChild(el('p'));
+    neBackdrop.hidden = false;
+    updateEditorSize();
+    // Caret inside the last block, not after it — otherwise typing lands in
+    // a bare text node and the block buttons retag the wrong element.
+    neBody.focus();
+    caretToEndOf(neBody.lastElementChild || neBody);
+  }
+
+  function closeNoteEditor() {
+    if (!neBackdrop) return;
+    neBackdrop.hidden = true;
+    neBody.innerHTML = '';
+    editingNote = null;
+  }
+
+  function saveNoteEditor() {
+    if (!editingNote) return;
+    const blocks = readEditorBlocks();
+    const target = editingNote;
+    closeNoteEditor();
+    if (!blocks.length) {
+      if (target.id != null) flash('Note left unchanged — it was empty');
+      return;
+    }
+    pushHistory();
+    let o = target.id != null ? state.objects.find(x => x.id === target.id) : null;
+    if (!o) {
+      o = makeObject('note', { x: target.at.x, y: target.at.y, stroke: NOTE_COLOR });
+      state.objects.push(o);
+    }
+    o.blocks = blocks;
+    o.text = noteSummary(o);
+    delete o.media;
+    setSelection([o.id]);
+    refreshAll();
+    scheduleAutosave();
   }
 
   // Layer switches.
@@ -1823,7 +2172,14 @@
       const pin = [...state.objects].reverse()
         .find(o => o.type === 'note' && !o.hidden && layerVis.notes
                    && Math.hypot(w0.x - o.x, w0.y - o.y) <= nr);
-      if (pin) { openNoteCard(pin); if (!READONLY) setSelection([pin.id]); refreshAll(); return; }
+      if (pin) {
+        // Two clicks on a pin opens it for editing; one just shows the card.
+        if (!READONLY && e.detail >= 2) { closeNoteCard(); openNoteEditor({ id: pin.id }); return; }
+        openNoteCard(pin);
+        if (!READONLY) setSelection([pin.id]);
+        refreshAll();
+        return;
+      }
       closeNoteCard();
     }
 
@@ -2077,24 +2433,7 @@
       drag = null;
       switchToSelectTool();
       refreshAll();
-      showModal({
-        kind: 'prompt',
-        title: 'Add note',
-        message: 'This appears as a numbered pin. The text shows when you hover it.',
-        defaultValue: '',
-        placeholder: 'e.g. radiator to be replaced',
-        okText: 'Add',
-      }).then(txt => {
-        if (txt == null) return;
-        const trimmed = String(txt).trim();
-        if (!trimmed) return;
-        pushHistory();
-        const o = makeObject('note', { x: placeAt.x, y: placeAt.y, text: trimmed, stroke: NOTE_COLOR });
-        state.objects.push(o);
-        setSelection([o.id]);
-        refreshAll();
-        scheduleAutosave();
-      });
+      openNoteEditor({ at: placeAt });
       return;
     } else if (FIXTURES[state.tool]) {
       pushHistory();
@@ -3124,6 +3463,12 @@
         },
         lenOpts
       ));
+    } else if (o.type === 'note') {
+      dimRows.push(ctxItem('Edit note…', () => {
+        hideContextMenu();
+        closeNoteCard();
+        openNoteEditor({ id: o.id });
+      }, { disabled: !!o.locked }));
     } else if (o.type === 'ruler') {
       dimRows.push(ctxLenInput('Distance',
         () => Math.abs(o.offset || 0),
