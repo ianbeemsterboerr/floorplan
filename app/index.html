@@ -13,7 +13,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet"
   />
-  <link rel="stylesheet" href="styles.css?v=8" />
+  <link rel="stylesheet" href="styles.css?v=9" />
 </head>
 <body>
   <!-- ======================== Inline icon library ======================== -->
@@ -254,6 +254,7 @@
       <!-- Note card: notes can carry images and embeds, which cannot live on
            a canvas, so the body of a note is real DOM laid over it. -->
       <div class="note-card" id="note-card" hidden role="dialog" aria-label="Note">
+        <button class="note-edit" id="note-edit" type="button">Edit</button>
         <button class="note-close" id="note-close" type="button" aria-label="Close">&times;</button>
         <div class="note-num" id="note-num"></div>
         <div class="note-text" id="note-text"></div>
@@ -370,6 +371,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>

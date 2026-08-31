@@ -59,8 +59,12 @@ Drag to pan, scroll or pinch to zoom.
 
 ## Notes
 
-Press `A` and click to drop a note; double-click a pin to edit it again. It
-shows as a numbered pin — **hover** for the text, **click** to open the card.
+Press `A` and click to drop a note. It shows as a numbered pin — **hover**
+for the text, **click** to open the card.
+
+Three ways back into an existing one: the **Edit** button on the card,
+double-clicking the pin, or right-click → **Edit note…**. None of them appear
+in view mode.
 
 The editor takes a paste and works out what you meant:
 

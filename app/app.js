@@ -6,7 +6,7 @@
 
   // Build tag — check this in the browser console to confirm which script
   // the page actually loaded. Bump it alongside the ?v= in index.html.
-  const BUILD = 8;
+  const BUILD = 9;
 
   // One app, two modes. Served from a real host it is a read-only viewer;
   // run locally it is the full editor. ?mode=edit / ?mode=view forces either.
@@ -1908,6 +1908,11 @@
   }
 
   if (noteCard) {
+    document.getElementById('note-edit').addEventListener('click', () => {
+      const id = openNoteId;              // closing clears it, so grab it first
+      closeNoteCard();
+      if (id != null) openNoteEditor({ id });
+    });
     document.getElementById('note-close').addEventListener('click', closeNoteCard);
     // Clicks inside the card belong to the card, not the canvas underneath.
     noteCard.addEventListener('mousedown', (e) => e.stopPropagation());

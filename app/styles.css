@@ -2069,3 +2069,14 @@ body.view-mode .canvas-wrap { cursor: grab; }
 .note-card h3:first-child { margin-top: 0; }
 .note-card p { margin: 0 0 7px; }
 .note-card p b { font-weight: 700; }
+
+/* Edit affordance on the note card — the place you are already looking when
+   you decide a note needs changing. Absent in view mode. */
+.note-card .note-edit {
+  position: absolute; top: 7px; right: 32px;
+  padding: 2px 9px; font: inherit; font-size: 11.5px; cursor: pointer;
+  color: #5b6577; background: #f4f6fa;
+  border: 1px solid #dfe4ee; border-radius: 5px;
+}
+.note-card .note-edit:hover { background: #eaeef7; color: #1c2433; }
+body.view-mode .note-card .note-edit { display: none; }
