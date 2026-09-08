@@ -200,6 +200,12 @@
     return `${v} m\u00b2`;
   }
 
+  // Area labels belong to the Measurements layer: every room and closed
+  // polygon carries one while that layer is on. Right-click -> Hide area
+  // opts a single shape out (showArea === false); anything else shows.
+  const areaOptedIn = (o) => o.showArea !== false;
+  const showsArea = (o) => layerVis.measurements && areaOptedIn(o);
+
   // Intersection area of two axis-aligned rectangles (0 if disjoint).
   function rectIntersectArea(a, b) {
     const x = Math.max(a.x, b.x);
@@ -1133,7 +1139,7 @@
       }
       // Per-room area label (opt-in via right-click). Position is stored as
       // fractional offset (0..1) inside the room so it follows on move/resize.
-      if (o.showArea) {
+      if (showsArea(o)) {
         // Net area = own rectangle minus overlapping rooms drawn on top of
         // it. Matches "perimeter visible at click point" intuition.
         const text = fmtArea(roomNetArea(o));
@@ -1181,7 +1187,7 @@
         ctx.lineWidth = o.strokeWidth || 2;
         ctx.stroke();
         // Optional label at centroid
-        const c = (o.closed && (o.label || o.showArea)) ? polygonCentroid(pts) : null;
+        const c = (o.closed && (o.label || showsArea(o))) ? polygonCentroid(pts) : null;
         if (o.closed && o.label) {
           const sp = worldToScreen(c.x, c.y);
           ctx.fillStyle = '#1c2433';
@@ -1193,7 +1199,7 @@
         // Per-polygon area label (opt-in via right-click).
         // Position is stored in absolute world coords so it stays put under
         // vertex reshapes; defaults to centroid when first turned on.
-        if (o.closed && o.showArea) {
+        if (o.closed && showsArea(o)) {
           const text = fmtArea(polygonArea(pts));
           const ax = (o.areaPos && typeof o.areaPos.x === 'number') ? o.areaPos.x : c.x;
           const ay = (o.areaPos && typeof o.areaPos.y === 'number') ? o.areaPos.y
@@ -2092,7 +2098,7 @@
   function hitAreaLabel(sx, sy) {
     for (let i = state.objects.length - 1; i >= 0; i--) {
       const o = state.objects[i];
-      if ((o.type !== 'room' && o.type !== 'polygon') || !o.showArea || !o._areaRect) continue;
+      if ((o.type !== 'room' && o.type !== 'polygon') || !showsArea(o) || !o._areaRect) continue;
       const r = o._areaRect;
       if (Math.abs(sx - r.cx) <= r.halfW && Math.abs(sy - r.cy) <= r.halfH) return o;
     }
@@ -3398,9 +3404,9 @@
         scheduleAutosave();
       }, { disabled: !!o.locked }));
       // Per-room area label toggle. Drag the label inside the room to move it.
-      frag.appendChild(ctxItem(o.showArea ? 'Hide area' : 'Show area', () => {
+      frag.appendChild(ctxItem(areaOptedIn(o) ? 'Hide area' : 'Show area', () => {
         pushHistory();
-        o.showArea = !o.showArea;
+        o.showArea = !areaOptedIn(o);
         if (o.showArea && !o.areaPos) o.areaPos = { fx: 0.5, fy: 0.5 };
         refreshAll();
         scheduleAutosave();
@@ -3416,9 +3422,9 @@
         refreshAll();
         scheduleAutosave();
       }, { disabled: !!o.locked }));
-      frag.appendChild(ctxItem(o.showArea ? 'Hide area' : 'Show area', () => {
+      frag.appendChild(ctxItem(areaOptedIn(o) ? 'Hide area' : 'Show area', () => {
         pushHistory();
-        o.showArea = !o.showArea;
+        o.showArea = !areaOptedIn(o);
         // Centroid is the natural default; user can drag it elsewhere.
         if (o.showArea && !o.areaPos) {
           const c = polygonCentroid(o.points);
